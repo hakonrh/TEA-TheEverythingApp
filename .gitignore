@@ -1,6 +1,7 @@
-# Ignore virtual environment & dependencies
-backend/.venv/
-backend/__pycache__/
-backend/.env
-frontend/node_modules/
-frontend/.env
+tea-backend/.venv/
+tea-backend/__pycache__/
+tea-backend/.env
+tea-frontend/node_modules/
+tea-frontend/.env
+tea-backend/.env
+queries

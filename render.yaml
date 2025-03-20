@@ -1,0 +1,31 @@
+services:
+  # ✅ Backend Service (FastAPI + PostgreSQL in one)
+  - name: tea-backend
+    type: web
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: |
+      cd tea-backend
+      pip install -r requirements.txt
+    startCommand: |
+      cd tea-backend
+      ./start.sh
+    envVars:
+      - key: DATABASE_URL
+        value: "postgresql+asyncpg://postgres:password@localhost:5432/tea_database"
+
+  # ✅ Frontend Service (React, Vue, Next.js, etc.)
+  - name: tea-frontend
+    type: web
+    env: static
+    plan: free
+    region: oregon
+    buildCommand: |
+      cd tea-frontend
+      npm install
+      npm run build
+    staticPublishPath: frontend/build
+    envVars:
+      - key: REACT_APP_BACKEND_URL
+        value: "https://tea-backend.onrender.com"
