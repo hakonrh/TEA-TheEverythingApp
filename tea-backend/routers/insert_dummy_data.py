@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql import text
 from database import get_db
 
 router = APIRouter()
@@ -7,7 +8,7 @@ router = APIRouter()
 @router.post("/insert-dummy-data")
 async def insert_dummy_data(db: AsyncSession = Depends(get_db)):
     try:
-        await db.execute("""
+        await db.execute(text("""
             -- Insert sample accounts
             INSERT INTO Accounts (Email, Username, PasswordHash) VALUES
             ('alice@example.com', 'Alice', 'hashed_password_1'),
@@ -51,7 +52,7 @@ async def insert_dummy_data(db: AsyncSession = Depends(get_db)):
             (3, 2),
             (4, 11),
             (5, 16);
-        """)
+        """))
         await db.commit()
         return {"message": "Dummy data inserted successfully!"}
     except Exception as e:
