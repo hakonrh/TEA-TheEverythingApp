@@ -6,9 +6,10 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:password@localhost:5432/tea_database")
+# Get the DATABASE_URL from environment variables
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Async engine for PostgreSQL
+# Create async engine
 engine = create_async_engine(DATABASE_URL, echo=True)
 
 # Session Factory
