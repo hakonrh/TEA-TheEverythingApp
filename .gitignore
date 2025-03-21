@@ -4,4 +4,5 @@ tea-backend/.env
 tea-frontend/node_modules/
 tea-frontend/.env
 tea-backend/.env
+tea-backend/routers/__pycache__
 queries
