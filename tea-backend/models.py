@@ -33,9 +33,6 @@ class Follower(Base):
     FollowerID = Column(Integer, ForeignKey("Accounts.AccountID", ondelete="CASCADE"), primary_key=True)
     FollowingID = Column(Integer, ForeignKey("Accounts.AccountID", ondelete="CASCADE"), primary_key=True)
 
-    following = relationship("Account", foreign_keys=[FollowingID], back_populates="followers")
-
-
 class Post(Base):
     __tablename__ = "Posts"
 
