@@ -7,6 +7,8 @@ from models import Account, Base
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
+router = APIRouter()
+
 def get_session():
     session = SessionLocal()
     try:
@@ -18,8 +20,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_hashed_password(password: str) -> str:
     return pwd_context.hash(password)
-
-router = APIRouter()
 
 @router.post("/register")
 def register_account(account: schemas.AccountCreate, session: Session = Depends(get_session)):
