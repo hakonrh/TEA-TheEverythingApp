@@ -9,7 +9,7 @@ app = FastAPI()
 
 app.include_router(insert_dummy_data.router, prefix="/data", tags=["Data Management"])
 app.include_router(fetch_random.router, prefix="/random", tags=["Random Data"])
-app.include_router(fetch_tables.router, prefix="/check_tables")
+app.include_router(fetch_tables.router, prefix="/")
 
 @app.get("/")
 async def root():
