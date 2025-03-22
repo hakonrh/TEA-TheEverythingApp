@@ -6,6 +6,11 @@ from database import get_db
 
 router = APIRouter()
 
+async def fetch_all_as_dicts(result):
+    """Helper function to convert raw SQLAlchemy result to list of dictionaries"""
+    rows = result.fetchall()
+    return [dict(row._mapping) for row in rows]  # Convert Row objects to dictionaries
+
 @router.get("/random-post")
 async def get_random_post(db: AsyncSession = Depends(get_db)):
     result = await db.execute(text("SELECT * FROM posts;"))
