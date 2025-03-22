@@ -9,13 +9,13 @@ router = APIRouter()
 async def check_tables(db: AsyncSession = Depends(get_db)):
     result = await db.execute(text("SELECT * FROM posts LIMIT 5;"))
     tables = result.fetchall()
-    return {"tables": [row[0] for row in tables]}
+    return {"posts": [dict(row._mapping) for row in tables]}
 
 @router.get("/check-accounts")
 async def check_tables(db: AsyncSession = Depends(get_db)):
     result = await db.execute(text("SELECT * FROM accounts LIMIT 5;"))
     tables = result.fetchall()
-    return {"tables": [row[0] for row in tables]}
+    return {"accounts": [dict(row._mapping) for row in tables]}  
 
 @router.get("/check-tables")
 async def check_tables(db: AsyncSession = Depends(get_db)):
