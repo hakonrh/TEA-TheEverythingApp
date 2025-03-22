@@ -16,3 +16,9 @@ async def check_tables(db: AsyncSession = Depends(get_db)):
     result = await db.execute(text("SELECT * FROM Accounts LIMIT 5;"))
     tables = result.fetchall()
     return {"tables": [row[0] for row in tables]}
+
+@router.get("/check-tables")
+async def check_tables(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';"))
+    tables = result.fetchall()
+    return {"tables": [row[0] for row in tables]}
