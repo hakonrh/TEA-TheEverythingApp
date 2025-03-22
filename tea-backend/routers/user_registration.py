@@ -1,12 +1,9 @@
 import schemas
 import models
-from models import Account, Base
 from database import engine, SessionLocal
-from fastapi import FastAPI, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from passlib.context import CryptContext
+from fastapi import APIRouter, Depends, HTTPException, status, Form
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import Form
+from models import Account, Base
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
@@ -22,9 +19,9 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_hashed_password(password: str) -> str:
     return pwd_context.hash(password)
 
-app=FastAPI()
+router = APIRouter()
 
-@app.post("/register")
+@router.post("/register")
 def register_account(account: schemas.AccountCreate, session: Session = Depends(get_session)):
     existing_account = session.query(models.Account).filter_by(email=account.email).first()
     if existing_account:
@@ -45,7 +42,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-@app.post("/login")
+@router.post("/login")
 def login(
     email: str = Form(...), 
     password: str = Form(...), 
