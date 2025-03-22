@@ -10,14 +10,12 @@ from fastapi import Form
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-Base.metadata.create_all(engine)
 def get_session():
     session = SessionLocal()
     try:
         yield session
     finally:
         session.close()
-
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
