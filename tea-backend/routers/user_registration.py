@@ -6,7 +6,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from models import Account, Base
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import text
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
 
 router = APIRouter()
 
