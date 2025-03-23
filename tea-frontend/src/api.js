@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://tea-theeverythingapp.onrender.com/";
+const API_BASE_URL = "https://tea-theeverythingapp.onrender.com";
 
 export async function getPosts() {
   try {
