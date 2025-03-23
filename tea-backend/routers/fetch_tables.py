@@ -21,4 +21,4 @@ async def check_tables(db: AsyncSession = Depends(get_db)):
 async def check_tables(db: AsyncSession = Depends(get_db)):
     result = await db.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';"))
     tables = result.fetchall()
-    return {"tables": [row[0] for row in tables]}
+    return {"tables": [dict(row._mapping) for row in tables]}

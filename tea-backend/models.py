@@ -7,24 +7,24 @@ Base = declarative_base()
 class Account(Base):
     __tablename__ = "accounts"
 
-    AccountID = Column(Integer, primary_key=True, index=True)
-    Email = Column(String(255), unique=True, nullable=False)
-    Username = Column(String(50), unique=True, nullable=False)
-    PasswordHash = Column(Text, nullable=False)
-    CreatedAt = Column(TIMESTAMP, server_default=func.now(), index=True)
+    accountid = Column(Integer, primary_key=True, index=True)
+    email = Column(String(255), unique=True, nullable=False)
+    username = Column(String(50), unique=True, nullable=False)
+    passwordhash = Column(Text, nullable=False)
+    createdat = Column(TIMESTAMP, server_default=func.now(), index=True)
 
     posts = relationship("Post", back_populates="account", passive_deletes=True)
     likes = relationship("Like", back_populates="account", passive_deletes=True)
 
     followers = relationship(
         "Follower",
-        foreign_keys="[Follower.FollowingID]",
+        foreign_keys="[Follower.followingid]",
         backref="followed_account",
         passive_deletes=True
     )
     following = relationship(
         "Follower",
-        foreign_keys="[Follower.FollowerID]",
+        foreign_keys="[Follower.followerid]",
         backref="follower_account",
         passive_deletes=True
     )
@@ -32,26 +32,26 @@ class Account(Base):
 class Follower(Base):
     __tablename__ = "followers"
 
-    FollowerID = Column(Integer, ForeignKey("accounts.AccountID", ondelete="CASCADE"), primary_key=True)
-    FollowingID = Column(Integer, ForeignKey("accounts.AccountID", ondelete="CASCADE"), primary_key=True)
+    followerid = Column(Integer, ForeignKey("accounts.accountid", ondelete="CASCADE"), primary_key=True)
+    followingid = Column(Integer, ForeignKey("accounts.accountid", ondelete="CASCADE"), primary_key=True)
 
 class Post(Base):
     __tablename__ = "posts"
 
-    PostID = Column(Integer, primary_key=True, index=True)
-    AccountID = Column(Integer, ForeignKey("accounts.AccountID", ondelete="CASCADE"), nullable=False)
-    ParentPostID = Column(Integer, ForeignKey("posts.PostID", ondelete="SET NULL"), nullable=True)
-    Content = Column(String(240), nullable=False)
-    CreatedAt = Column(TIMESTAMP, server_default=func.now(), index=True)
-    LastEdited = Column(TIMESTAMP, nullable=True)
+    postid = Column(Integer, primary_key=True, index=True)
+    accountid = Column(Integer, ForeignKey("accounts.accountid", ondelete="CASCADE"), nullable=False)
+    parentpostid = Column(Integer, ForeignKey("posts.postid", ondelete="SET NULL"), nullable=True)
+    content = Column(String(240), nullable=False)
+    createdat = Column(TIMESTAMP, server_default=func.now(), index=True)
+    lastedited = Column(TIMESTAMP, nullable=True)
 
     account = relationship("Account", back_populates="posts", passive_deletes=True)
-    parent_post = relationship("Post", remote_side=[PostID], backref="replies", cascade="all, delete")
+    parent_post = relationship("Post", remote_side=[postid], backref="replies", cascade="all, delete")
 
 class Like(Base):
     __tablename__ = "likes"
 
-    AccountID = Column(Integer, ForeignKey("accounts.AccountID", ondelete="CASCADE"), primary_key=True)
-    PostID = Column(Integer, ForeignKey("posts.PostID", ondelete="CASCADE"), primary_key=True)
+    accountid = Column(Integer, ForeignKey("accounts.accountid", ondelete="CASCADE"), primary_key=True)
+    postid = Column(Integer, ForeignKey("posts.postid", ondelete="CASCADE"), primary_key=True)
 
     account = relationship("Account", back_populates="likes", passive_deletes=True)
