@@ -1,7 +1,8 @@
 import schemas
 import models
 import jwt
-import datetime
+from datetime import datetime, timedelta
+
 
 from database import engine, SessionLocal
 from fastapi import APIRouter, Depends, HTTPException, status, Form
@@ -28,7 +29,7 @@ def get_hashed_password(password: str) -> str:
 # Function for generating JWT
 def create_access_token(data: dict, expires_delta: int = 60):
     to_encode = data.copy()
-    expire = datetime.timezone.utc() + datetime.timedelta(minutes=expires_delta)
+    expire = datetime.timezone.utc + timedelta(minutes=expires_delta)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -76,6 +77,10 @@ async def login(
     if not account or not verify_password(password, account.passwordhash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    access_token = create_access_token(data={"sub": account.email})
+    access_token = create_access_token(data={"sub": account.email, "id": account.accountid})
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "expires_in": 60 * 60  # Expiration time in seconds
+    }
