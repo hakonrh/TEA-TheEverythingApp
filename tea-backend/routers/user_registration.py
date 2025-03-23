@@ -1,12 +1,19 @@
 import schemas
 import models
+import jwt
+import datetime
+
 from database import engine, SessionLocal
 from fastapi import APIRouter, Depends, HTTPException, status, Form
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 from models import Account
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+
+SECRET_KEY = "tell_no_one"
+ALGORITHM = "HS256"
+
 router = APIRouter()
 
 async def get_session():
@@ -18,19 +25,27 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_hashed_password(password: str) -> str:
     return pwd_context.hash(password)
 
+# Function for generating JWT
+def create_access_token(data: dict, expires_delta: int = 60):
+    to_encode = data.copy()
+    expire = datetime.datetime.timezone.utc() + datetime.timedelta(minutes=expires_delta)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
 @router.post("/register")
 async def register_account(account: schemas.AccountCreate, session: AsyncSession = Depends(get_session)):
-    # Check if the email already exists
-    result = await session.execute(select(Account).where(Account.email == account.email))
+    result = await session.execute(select(Account).where((Account.email == account.email) | (Account.username == account.username)))
     existing_account = result.scalars().first()
 
     if existing_account:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        if existing_account.email == account.email:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        if existing_account.username == account.username:
+            raise HTTPException(status_code=400, detail="Username already taken")
 
-    # Hash the password
     encrypted_password = get_hashed_password(account.password)
 
-    # Create a new account object
     new_account = Account(
         username=account.username,
         email=account.email,
@@ -43,8 +58,7 @@ async def register_account(account: schemas.AccountCreate, session: AsyncSession
 
     return {"message": "Account created successfully"}
 
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -55,11 +69,13 @@ async def login(
     password: str = Form(...), 
     session: AsyncSession = Depends(get_session)
 ):
-    # Fetch the account using ORM
+
     result = await session.execute(select(Account).where(Account.email == email))
     account = result.scalars().first()
 
     if not account or not verify_password(password, account.passwordhash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    return {"message": "Login successful"}
+    access_token = create_access_token(data={"sub": account.email})
+
+    return {"access_token": access_token, "token_type": "bearer"}
