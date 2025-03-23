@@ -23,7 +23,7 @@ def get_hashed_password(password: str) -> str:
 @router.post("/register")
 async def register_account(account: schemas.AccountCreate, session: AsyncSession = Depends(get_session)):
     result = await session.execute(
-        text("SELECT * FROM account WHERE email = :email"), {"email": account.email}
+        text("SELECT * FROM accounts WHERE email = :email"), {"email": account.email}
     )
     existing_account = result.fetchone()
 
@@ -53,7 +53,7 @@ async def login(
     session: AsyncSession = Depends(get_session)
 ):
     result = await session.execute(
-        text("SELECT * FROM account WHERE email = :email"), {"email": email}
+        text("SELECT * FROM accounts WHERE email = :email"), {"email": email}
     )
     account = result.fetchone()
 
