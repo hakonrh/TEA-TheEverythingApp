@@ -82,7 +82,6 @@ async def edit_post(
 @router.delete("/posts/{post_id}")
 async def delete_post(
     post_id: int,
-    post_data: DeletePostRequest,
     current_user: Account = Depends(get_current_account),
     db: AsyncSession = Depends(get_db)
 ):
