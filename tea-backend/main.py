@@ -10,6 +10,17 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+allow_origins=[
+    "https://tea-dofo.onrender.com",
+    "http://localhost:3000"
+]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(fetch_tables.router)
 app.include_router(posts.router)
 app.include_router(accounts.router)
@@ -18,11 +29,3 @@ app.include_router(user_router, prefix="/user")
 @app.get("/")
 async def root():
     return {"message": "Welcome to the TEA - The Everything App API!"}
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://tea-dofo.onrender.com/"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
