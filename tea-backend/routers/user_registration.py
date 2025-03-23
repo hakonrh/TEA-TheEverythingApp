@@ -4,12 +4,16 @@ import jwt
 from datetime import datetime, timedelta
 import pytz
 
-
 from database import engine, SessionLocal
+
 from fastapi import APIRouter, Depends, HTTPException, status, Form
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.responses import JSONResponse
+
 from models import Account
+
 from passlib.context import CryptContext
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -80,8 +84,13 @@ async def login(
 
     access_token = create_access_token(data={"sub": account.email, "id": account.accountid})
 
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "expires_in": 60 * 60  # Expiration time in seconds
-    }
+    response = JSONResponse(
+        content={
+            "access_token": access_token,
+            "token_type": "bearer",
+            "expires_in": 60 * 60  # Expiration time in seconds
+        }
+    )
+    response.headers["Authorization"] = f"Bearer {access_token}"
+
+    return response
