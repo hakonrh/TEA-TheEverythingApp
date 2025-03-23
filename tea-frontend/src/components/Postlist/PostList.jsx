@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { getPosts } from "../../api";
+import "./PostList.css";
 
 export default function PostList() {
   const [posts, setPosts] = useState([]);

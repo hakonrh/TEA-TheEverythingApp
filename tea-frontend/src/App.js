@@ -1,6 +1,5 @@
 import PostList from "./components/Postlist/PostList";
 import React from "react";
-import "./PostList.css";
 
 function App() {
   return (
