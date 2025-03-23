@@ -6,7 +6,7 @@ from database import get_db
 from pydantic import BaseModel
 from user_registration import get_current_account
 from models import Account
-from schemas import CreatePostRequest, EditPostRequest, DeletePostRequest
+from schemas import CreatePostRequest, EditPostRequest
 
 router = APIRouter()
 
