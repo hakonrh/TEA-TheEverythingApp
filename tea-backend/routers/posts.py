@@ -24,7 +24,6 @@ async def get_posts(db: AsyncSession = Depends(get_db)):
 
 @router.post("/posts")
 async def create_post(
-    content: str,
     post_data: CreatePostRequest,
     db: AsyncSession = Depends(get_db),
     current_user: Account = Depends(get_current_account)
@@ -40,7 +39,7 @@ async def create_post(
 
     values = {
         "accountid": current_user.accountid,
-        "content": content,
+        "content": post_data.content,
     }
 
     result = await db.execute(query, values)
@@ -50,12 +49,11 @@ async def create_post(
         raise HTTPException(status_code=500, detail="Failed to create post")
 
     await db.commit()
-    return {"postid": post.postid, "accountid": post_data.accountid, "content": post_data.content, "createdat": post.createdat}
+    return {"postid": post.postid, "content": post_data.content, "createdat": post.createdat}
 
 @router.put("/posts/{post_id}")
 async def edit_post(
     post_id: int,
-    content: str,
     post_data: EditPostRequest,
     db: AsyncSession = Depends(get_db),
     current_user: Account = Depends(get_current_account)
@@ -75,7 +73,7 @@ async def edit_post(
     # Update the post
     await db.execute(
         text("UPDATE posts SET content = :content, lastedited = NOW() WHERE postid = :postid"),
-        {"content": content, "postid": post_id},
+        {"content": post_data.new_content, "postid": post_id},
     )
     await db.commit()
 
