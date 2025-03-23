@@ -2,6 +2,7 @@ import schemas
 import models
 import jwt
 from datetime import datetime, timedelta
+import pytz
 
 
 from database import engine, SessionLocal
@@ -29,7 +30,7 @@ def get_hashed_password(password: str) -> str:
 # Function for generating JWT
 def create_access_token(data: dict, expires_delta: int = 60):
     to_encode = data.copy()
-    expire = datetime.timezone.utc + timedelta(minutes=expires_delta)
+    expire = datetime.now(pytz.utc) + timedelta(minutes=expires_delta)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
