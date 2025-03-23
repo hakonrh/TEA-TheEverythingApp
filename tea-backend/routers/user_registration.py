@@ -33,9 +33,9 @@ async def register_account(account: schemas.AccountCreate, session: AsyncSession
     encrypted_password = get_hashed_password(account.password)
 
     new_account = models.Account(
-    Username=account.username,
-    Email=account.email,
-    PasswordHash=encrypted_password
+    username=account.username,
+    email=account.email,
+    passwordhash=encrypted_password
 )
 
 
