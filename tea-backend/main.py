@@ -4,7 +4,7 @@ from sqlalchemy import text
 from database import get_db
 
 from routers import fetch_tables, posts, accounts
-from routers.user_registration import router as user_router
+from user_registration import router as user_router
 
 app = FastAPI()
 
