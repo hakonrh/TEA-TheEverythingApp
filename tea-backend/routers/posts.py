@@ -10,6 +10,7 @@ from schemas import CreatePostRequest, EditPostRequest
 
 router = APIRouter()
 
+# Get all posts
 @router.get("/posts")
 async def get_posts(db: AsyncSession = Depends(get_db)):
     query = text("""
@@ -22,6 +23,26 @@ async def get_posts(db: AsyncSession = Depends(get_db)):
     posts = result.fetchall()
     return {"posts": [dict(row._mapping) for row in posts]}
 
+# Get current user's posts
+@router.get("/myposts")
+async def get_user_posts(
+    db: AsyncSession = Depends(get_db),
+    current_user: Account = Depends(get_current_account)
+):
+    query = text("""
+        SELECT postid, content, createdat, lastedited
+        FROM posts
+        WHERE accountid = :accountid
+        ORDER BY createdat DESC;
+    """)
+
+    result = await db.execute(query, {"accountid": current_user.accountid})
+    posts = result.fetchall()
+
+    return {"posts": [dict(row._mapping) for row in posts]}
+
+
+# Make a new post
 @router.post("/posts")
 async def create_post(
     post_data: CreatePostRequest,
@@ -51,6 +72,7 @@ async def create_post(
     await db.commit()
     return {"postid": post.postid, "content": post_data.content, "createdat": post.createdat}
 
+# Edit post by id
 @router.put("/posts/{post_id}")
 async def edit_post(
     post_id: int,
@@ -79,6 +101,7 @@ async def edit_post(
 
     return {"message": "Post updated"}
 
+# Delete post by id
 @router.delete("/posts/{post_id}")
 async def delete_post(
     post_id: int,
