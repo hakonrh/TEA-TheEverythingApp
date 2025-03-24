@@ -32,7 +32,7 @@ async def get_accounts(db: AsyncSession = Depends(get_db)):
                COUNT(posts.postid) AS num_posts
         FROM accounts
         LEFT JOIN posts ON accounts.accountid = posts.accountid
-        GROUP BY accounts.username, accounts.email;
+        GROUP BY accounts.accountid, accounts.username, accounts.email;
     """)
     result = await db.execute(query)
     accounts = result.fetchall()
