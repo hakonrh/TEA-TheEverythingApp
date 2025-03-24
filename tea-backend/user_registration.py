@@ -91,7 +91,8 @@ async def login(
         content={
             "access_token": access_token,
             "token_type": "bearer",
-            "expires_in": 60 * 60  # Expiration time in seconds
+            "expires_in": 60 * 60,  # Expiration time in seconds
+            "username": account.username
         }
     )
     response.headers["Authorization"] = f"Bearer {access_token}"
