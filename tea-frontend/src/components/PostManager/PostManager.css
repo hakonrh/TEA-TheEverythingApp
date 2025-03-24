@@ -1,0 +1,29 @@
+.create-post-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.write-post {
+    all: unset;
+    
+    background-color: var(--light-gray-medium);
+    color: var(--dark-gray-dark);
+    width: 35%;
+    height: 5em;
+    margin-bottom: 1em;
+    padding: 0.3em;
+    border-radius: 0.5em;
+    outline: 3px solid var(--dark-gray-dark);
+}
+
+.write-post:focus {
+    outline: 3px solid var(--light-blue-light); /* Custom focus indicator */
+    background-color: var(--light-gray-light);
+  }
+
+.login-prompt {
+    text-align: center;
+    font-size: 1.3em;
+    margin-top: 2em;
+}

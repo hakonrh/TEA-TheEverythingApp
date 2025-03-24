@@ -14,13 +14,14 @@ router = APIRouter()
 @router.get("/posts")
 async def get_posts(db: AsyncSession = Depends(get_db)):
     query = text("""
-        SELECT accounts.username, accounts.email, posts.content, posts.createdat 
+        SELECT posts.postid, accounts.username, accounts.email, posts.content, posts.createdat 
         FROM posts 
         JOIN accounts ON posts.accountid = accounts.accountid
         ORDER BY posts.createdat DESC;
     """)
     result = await db.execute(query)
     posts = result.fetchall()
+    
     return {"posts": [dict(row._mapping) for row in posts]}
 
 # Get current user's posts

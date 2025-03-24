@@ -1,0 +1,43 @@
+nav {
+    background-color: var(--dark-gray-dark);
+}
+
+nav * {
+    margin-right: 0.5em;
+}
+
+.link-style {
+    padding: 20px;
+    text-align: center;
+    line-height: 2.4em;
+
+    color: var(--light-gray-light);
+    text-decoration: none;
+}
+
+.link-style:hover {
+    background-color: var(--dark-gray-medium);
+    text-decoration: underline;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.logo {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: var(--light-blue-light);
+}
+
+.logo:hover {
+    color: var(--light-gray-light);
+}
+
+.logout-button {
+    line-height: 2em;
+    border-radius: 0;
+}
+
+.logout-button:hover {
+    background-color: var(--dark-gray-medium);
+    color: var(--light-blue-light);
+    text-decoration: underline;
+}

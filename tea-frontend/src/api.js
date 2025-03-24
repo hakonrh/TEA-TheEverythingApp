@@ -38,14 +38,24 @@ export async function createPost(content) {
 }
 
 // Edit a post
-export async function editPost(postId, content) {
+export async function editPost(postId, newContent) {
   const response = await fetch(`${API_BASE_URL}/posts/${postId}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-    body: JSON.stringify({ content }),
+    headers: { 
+      ...getAuthHeaders(), 
+      "Content-Type": "application/json" 
+    },
+    body: JSON.stringify({ new_content: newContent }),
   });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || "Failed to edit post");
+  }
+
   return response.json();
 }
+
 
 // Delete a post
 export async function deletePost(postId) {

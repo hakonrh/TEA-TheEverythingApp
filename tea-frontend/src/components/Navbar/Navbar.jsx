@@ -1,32 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { getAuthStatus } from "../auth/auth";
+import "./Navbar.css"; 
 
 function Navbar() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [username, setUsername] = useState("");
-
+    const [auth, setAuth] = useState({ isAuthenticated: false, username: "" });
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        const storedUsername = localStorage.getItem("username");
-
-        setIsAuthenticated(!!token);
-        setUsername(storedUsername || "");
+        setAuth(getAuthStatus());
     }, []);
 
     function logout() {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
-        setIsAuthenticated(false);
-        setUsername("");
+        setAuth({ isAuthenticated: false, username: "" });
     }
 
     return (
-        <div>
-            <Link to="/" className="link-style">Home</Link>
-            {isAuthenticated ? (
+        <nav>
+            <Link to="/" className="link-style logo">TEA - The Everything App</Link>
+            {auth.isAuthenticated ? (
                 <>
-                    <span>Logged in as {username}.</span>
+                    <span>Logged in as {auth.username}.</span>
                     <button onClick={logout} className="logout-button">Logout</button>
                 </>
             ) : (
@@ -35,7 +30,7 @@ function Navbar() {
                     <Link to="/login" className="link-style">Log in</Link>
                 </>
             )}
-        </div>
+        </nav>
     );
 }
 

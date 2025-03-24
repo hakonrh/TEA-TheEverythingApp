@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getPosts, getAccounts, getUserPosts, editPost, deletePost } from "../../api";
+import { getAuthStatus } from "../auth/auth";
 import "./PostList.css";
 
 export default function PostList() {
@@ -9,9 +10,12 @@ export default function PostList() {
   const [view, setView] = useState("posts");
   const [editingPost, setEditingPost] = useState(null);
   const [editContent, setEditContent] = useState("");
+  const [auth, setAuth] = useState({ isAuthenticated: false, username: "" });
+
 
   useEffect(() => {
     fetchData();
+    setAuth(getAuthStatus());
   }, [view]);
 
   async function fetchData() {
@@ -26,10 +30,14 @@ export default function PostList() {
       } else if (view === "accounts") {
         result = await getAccounts();
         setData(result.accounts);
-      } else if (view === "myPosts") {
+      } else if (view === "myPosts" && auth.isAuthenticated) {
         result = await getUserPosts();
         setData(result.posts);
+      } else {
+        setData([]);
+        return;
       }
+      setData(result.posts || result.accounts || []);
     } catch (err) {
       setError(err.message);
     } finally {

@@ -5,13 +5,11 @@ import PostList from "../components/Postlist/PostList";
 import PostManager from "../components/PostManager/PostManager";
 
 function Main() {
-
-    const [refreshKey, setRefreshKey] = useState(0);
-
     return (
         <div>
     	    <Navbar />
-            <PostManager refreshPosts={() => setRefreshKey((prev) => prev + 1)} />
+            <PostManager />
+            <br /><br />
             <PostList />
         </div>
     );

@@ -28,7 +28,7 @@ async def get_accounts(db: AsyncSession = Depends(get_db)):
 @router.get("/accounts")
 async def get_accounts(db: AsyncSession = Depends(get_db)):
     query = text("""
-        SELECT accounts.username, accounts.email,
+        SELECT accounts.accountid, accounts.username, accounts.email,
                COUNT(posts.postid) AS num_posts
         FROM accounts
         LEFT JOIN posts ON accounts.accountid = posts.accountid
