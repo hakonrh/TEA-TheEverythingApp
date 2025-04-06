@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import Navbar from "../components/Navbar/Navbar";
 import PostList from "../components/Postlist/PostList";
 import PostManager from "../components/PostManager/PostManager";
+import SearchBar from "../components/SearchBar/SearchBar";
 
 function Main() {
     return (
         <div>
     	    <Navbar />
             <PostManager />
-            <br /><br />
+            <br />
+            <SearchBar />
+            <br />
             <PostList />
         </div>
     );

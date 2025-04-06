@@ -123,3 +123,30 @@ export async function loginUser(email, password) {
     throw error;
   }
 }
+
+// Search posts
+export async function searchPosts(query) {
+  const response = await fetch(`${API_BASE_URL}/search/posts?q=${encodeURIComponent(query)}`);
+  if (!response.ok) {
+    throw new Error("Failed to search posts");
+  }
+  return await response.json();
+}
+
+// Search accounts
+export async function searchAccounts(query) {
+  const response = await fetch(`${API_BASE_URL}/search/accounts?q=${encodeURIComponent(query)}`);
+  if (!response.ok) {
+    throw new Error("Failed to search accounts");
+  }
+  return await response.json();
+}
+
+// Search hashtags
+export async function searchHashtags(query) {
+  const response = await fetch(`${API_BASE_URL}/search/hashtags?q=${encodeURIComponent(query)}`);
+  if (!response.ok) {
+    throw new Error("Failed to search hashtags");
+  }
+  return await response.json();
+}

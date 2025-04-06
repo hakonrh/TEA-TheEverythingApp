@@ -1,0 +1,10 @@
+.search-container {
+    display: flex;
+    justify-content: center;
+}
+
+.search-input, .search-select {
+    margin-right: 1em;    
+    height: 1.5em;
+    border-radius: 0.2em;
+}

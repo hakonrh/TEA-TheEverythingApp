@@ -35,13 +35,3 @@ function Navbar() {
 }
 
 export default Navbar;
-
-
-/*
-Logo
-
-Posts
-Accounts
-
-Login/Logout
-*/

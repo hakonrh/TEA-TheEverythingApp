@@ -15,7 +15,7 @@ export default function PostManager({ refreshPosts }) {
     if (!newPostContent.trim()) return;
     await createPost(newPostContent);
     setNewPostContent("");
-    refreshPosts(); // Reload the post list
+    refreshPosts();
   };
 
   return (
