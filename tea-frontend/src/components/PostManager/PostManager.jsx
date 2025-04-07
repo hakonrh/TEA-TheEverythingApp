@@ -3,7 +3,7 @@ import { createPost } from "../../api";
 import { getAuthStatus } from "../auth/auth";
 import "./PostManager.css"
 
-export default function PostManager({ refreshPosts }) {
+export default function PostManager() {
   const [newPostContent, setNewPostContent] = useState("");
   const [auth, setAuth] = useState({ isAuthenticated: false });
 
@@ -14,8 +14,7 @@ export default function PostManager({ refreshPosts }) {
   const handleCreatePost = async () => {
     if (!newPostContent.trim()) return;
     await createPost(newPostContent);
-    setNewPostContent("");
-    refreshPosts();
+    window.location.reload();
   };
 
   return (
