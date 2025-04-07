@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { registerUser } from "../../api";
+import "./Registration.css";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -36,12 +37,12 @@ function Register() {
   };
 
   return (
-    <div>
+    <div className="register-container">
       <h2>Register</h2>
       {message && <p style={{ color: "green" }}>{message}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="register-form">
         <input
           type="text"
           name="username"
