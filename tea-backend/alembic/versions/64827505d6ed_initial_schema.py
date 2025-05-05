@@ -27,31 +27,14 @@ def upgrade():
             CreatedAt TIMESTAMP DEFAULT NOW()
         );
 
-        CREATE TABLE Followers (
-            FollowerID INT NOT NULL,
-            FollowingID INT NOT NULL,
-            PRIMARY KEY (FollowerID, FollowingID),
-            FOREIGN KEY (FollowerID) REFERENCES Accounts(AccountID) ON DELETE CASCADE,
-            FOREIGN KEY (FollowingID) REFERENCES Accounts(AccountID) ON DELETE CASCADE
-        );
-
         CREATE TABLE Posts (
             PostID SERIAL PRIMARY KEY, 
             AccountID INT NOT NULL,
-            ParentPostID INT NULL,
             Content VARCHAR(240) NOT NULL,
+            Likes INT NULL,
             CreatedAt TIMESTAMP DEFAULT NOW(),
             LastEdited TIMESTAMP NULL,
-            FOREIGN KEY (AccountID) REFERENCES Accounts(AccountID) ON DELETE CASCADE,
-            FOREIGN KEY (ParentPostID) REFERENCES Posts(PostID) ON DELETE CASCADE
-        );
-
-        CREATE TABLE Likes (
-            AccountID INT NOT NULL,
-            PostID INT NOT NULL,
-            PRIMARY KEY (AccountID, PostID),
-            FOREIGN KEY (AccountID) REFERENCES Accounts(AccountID) ON DELETE CASCADE,
-            FOREIGN KEY (PostID) REFERENCES Posts(PostID) ON DELETE CASCADE
+            FOREIGN KEY (AccountID) REFERENCES Accounts(AccountID) ON DELETE CASCADE
         );
     """)
 
