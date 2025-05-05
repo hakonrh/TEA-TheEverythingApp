@@ -11,9 +11,6 @@ services:
     startCommand: |
       cd tea-backend
       ./start.sh
-    envVars:
-      - key: DATABASE_URL
-        value: "postgresql+asyncpg://postgres:password@localhost:5432/tea_database"
 
   # ✅ Frontend Service (React, Vue, Next.js, etc.)
   - name: tea-frontend
