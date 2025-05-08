@@ -14,7 +14,7 @@ router = APIRouter()
 @router.get("/posts")
 async def get_posts(db: AsyncSession = Depends(get_db)):
     query = text("""
-        SELECT posts.postid, accounts.username, accounts.email, posts.content, posts.createdat 
+        SELECT posts.postid, accounts.username, accounts.email, posts.content, posts.createdat, posts.likes 
         FROM posts 
         JOIN accounts ON posts.accountid = accounts.accountid
         ORDER BY posts.createdat DESC;
@@ -31,7 +31,7 @@ async def get_user_posts(
     current_user: Account = Depends(get_current_account)
 ):
     query = text("""
-        SELECT postid, content, createdat, lastedited
+        SELECT postid, content, createdat, lastedited, likes
         FROM posts
         WHERE accountid = :accountid
         ORDER BY createdat DESC;
@@ -143,4 +143,4 @@ async def like_post(
     await db.execute(text("UPDATE posts SET likes = COALESCE(likes, 0) + 1 WHERE postid = :postid"), {"postid": post_id})
     await db.commit()
 
-    return {"message": "Post liked"}
+    return {"Post liked": post.likes}

@@ -86,7 +86,6 @@ export default function PostList() {
                   <p className="username">{post.username}</p>
                   <p className="content">{post.content}</p>
                   <p className="timestamp">{new Date(post.createdat).toLocaleString()}</p>
-                  <p className="timestamp">{new Date(post.createdat).toLocaleString()}</p>
                   <div className="like-section">
                     <button onClick={() => handleLike(post.postid)}>❤️ Like</button>
                     <span>{post.likes || 0} likes</span>
