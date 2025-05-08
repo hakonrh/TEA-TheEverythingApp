@@ -150,3 +150,18 @@ export async function searchHashtags(query) {
   }
   return await response.json();
 }
+
+// Like a post
+export async function likePost(postId) {
+  const response = await fetch(`${API_BASE_URL}/posts/${postId}/like`, {
+    method: "PATCH",
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || "Failed to like post");
+  }
+
+  return await response.json();
+}

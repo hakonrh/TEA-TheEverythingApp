@@ -124,3 +124,23 @@ async def delete_post(
     await db.commit()
 
     return {"message": "Post deleted"}
+
+# Like a post by id (increments likes by 1)
+@router.patch("/posts/{post_id}/like")
+async def like_post(
+    post_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: Account = Depends(get_current_account)
+):
+    # Check if the post exists
+    result = await db.execute(text("SELECT likes FROM posts WHERE postid = :postid"), {"postid": post_id})
+    post = result.fetchone()
+
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    # Increment likes
+    await db.execute(text("UPDATE posts SET likes = COALESCE(likes, 0) + 1 WHERE postid = :postid"), {"postid": post_id})
+    await db.commit()
+
+    return {"message": "Post liked"}

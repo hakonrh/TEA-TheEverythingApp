@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getPosts, getAccounts, getUserPosts, editPost, deletePost } from "../../api";
+import { getPosts, getAccounts, getUserPosts, editPost, deletePost, likePost } from "../../api";
 import { getAuthStatus } from "../auth/auth";
 import "./PostList.css";
 
@@ -21,7 +21,7 @@ export default function PostList() {
   async function fetchData() {
     setLoading(true);
     setError(null);
-    
+
     try {
       let result;
       if (view === "posts") {
@@ -56,6 +56,16 @@ export default function PostList() {
     fetchData(); // Refresh posts
   }
 
+  async function handleLike(postId) {
+    try {
+      await likePost(postId);
+      fetchData(); // Refresh to get updated like count
+    } catch (error) {
+      console.error("Failed to like post:", error.message);
+    }
+  }
+
+
   return (
     <div className="container">
       <div className="button-group">
@@ -76,6 +86,12 @@ export default function PostList() {
                   <p className="username">{post.username}</p>
                   <p className="content">{post.content}</p>
                   <p className="timestamp">{new Date(post.createdat).toLocaleString()}</p>
+                  <p className="timestamp">{new Date(post.createdat).toLocaleString()}</p>
+                  <div className="like-section">
+                    <button onClick={() => handleLike(post.postid)}>❤️ Like</button>
+                    <span>{post.likes || 0} likes</span>
+                  </div>
+
                 </li>
               ))}
             </ul>
@@ -87,8 +103,8 @@ export default function PostList() {
                 <li key={post.postid} className="post">
                   {editingPost === post.postid ? (
                     <>
-                      <textarea 
-                        value={editContent} 
+                      <textarea
+                        value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
                       />
                       <button onClick={() => handleEditPost(post.postid)}>Save</button>
