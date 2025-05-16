@@ -12,7 +12,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://tea-dofo.onrender.com", "http://localhost:3000", "http://localhost:8000"],
+    allow_origins=["https://tea-dofo.onrender.com", "https://tea-cache.onrender.com/", "http://localhost:3000", "http://localhost:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
