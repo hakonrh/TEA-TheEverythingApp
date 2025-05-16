@@ -31,44 +31,42 @@ def invalidate_cache():
 
 @app.middleware("http")
 async def cache_middleware(request: Request, call_next):
-    # Only intercept GET requests
-    if request.method != "GET":
-        return await call_next(request)
+    method = request.method.upper()
 
-    invalidate_cache()
+    # Only cache GET
+    if method == "GET":
+        invalidate_cache()
+        cache_key = str(request.url)
 
-    # Use full request URL as cache key
-    cache_key = str(request.url)
+        if cache_key in cache:
+            print(f"Cache HIT for {cache_key}")
+            return cache[cache_key]["response"]
 
-    # Check cache
-    if cache_key in cache:
-        print(f"Cache HIT for {cache_key}")
-        return cache[cache_key]["response"]
-
-    print(f"Cache MISS for {cache_key}")
+        print(f"Cache MISS for {cache_key}")
 
     # Construct backend URL
     backend_url = f"{BACKEND_API}{request.url.path}"
     if request.url.query:
         backend_url += f"?{request.url.query}"
 
-    # Prepare headers (remove Host to avoid forwarding local hostname)
     forward_headers = {
         key: value for key, value in request.headers.items()
         if key.lower() != "host"
     }
 
-    # Forward GET request to actual backend
     async with httpx.AsyncClient() as client:
         try:
-            resp = await client.get(backend_url, headers=forward_headers)
+            if method == "GET":
+                resp = await client.get(backend_url, headers=forward_headers)
+            else:
+                body = await request.body()
+                resp = await client.request(method, backend_url, headers=forward_headers, content=body)
         except httpx.RequestError as e:
             return Response(
                 content=f"Error forwarding request to backend: {str(e)}",
                 status_code=502
             )
 
-    # Construct FastAPI Response object
     response = Response(
         content=resp.content,
         status_code=resp.status_code,
@@ -76,13 +74,14 @@ async def cache_middleware(request: Request, call_next):
         media_type=resp.headers.get("content-type", "application/json"),
     )
 
-    # Cache the response
-    cache[cache_key] = {
-        "response": response,
-        "timestamp": time.time()
-    }
+    if method == "GET":
+        cache[str(request.url)] = {
+            "response": response,
+            "timestamp": time.time()
+        }
 
     return response
+
 
 @app.get("/")
 async def root():
