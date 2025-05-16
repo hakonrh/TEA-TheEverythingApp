@@ -1,10 +1,18 @@
-# cache_server.py
 from fastapi import FastAPI, Request, Response
 import httpx
 import time
 from typing import Dict
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://tea-dofo.onrender.com"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # In-memory cache
 cache: Dict[str, Dict] = {}
@@ -12,7 +20,7 @@ cache: Dict[str, Dict] = {}
 # Cache lifetime in seconds
 CACHE_TTL = 60  # 1 minute
 
-# Address of the actual API server
+# Address of the actual API server (hosted on Render)
 BACKEND_API = "https://tea-theeverythingapp.onrender.com"
 
 def invalidate_cache():
@@ -23,29 +31,44 @@ def invalidate_cache():
 
 @app.middleware("http")
 async def cache_middleware(request: Request, call_next):
-    url = str(request.url)
-
+    # Only intercept GET requests
     if request.method != "GET":
         return await call_next(request)
 
     invalidate_cache()
 
-    cache_key = url
+    # Use full request URL as cache key
+    cache_key = str(request.url)
 
     # Check cache
     if cache_key in cache:
         print(f"Cache HIT for {cache_key}")
         return cache[cache_key]["response"]
 
-    # Forward GET to backend
-    async with httpx.AsyncClient() as client:
-        backend_url = f"{BACKEND_API}{request.url.path}"
-        if request.url.query:
-            backend_url += f"?{request.url.query}"
-        headers = dict(request.headers)
-        resp = await client.get(backend_url, headers=headers)
+    print(f"Cache MISS for {cache_key}")
 
-    # Construct response
+    # Construct backend URL
+    backend_url = f"{BACKEND_API}{request.url.path}"
+    if request.url.query:
+        backend_url += f"?{request.url.query}"
+
+    # Prepare headers (remove Host to avoid forwarding local hostname)
+    forward_headers = {
+        key: value for key, value in request.headers.items()
+        if key.lower() != "host"
+    }
+
+    # Forward GET request to actual backend
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.get(backend_url, headers=forward_headers)
+        except httpx.RequestError as e:
+            return Response(
+                content=f"Error forwarding request to backend: {str(e)}",
+                status_code=502
+            )
+
+    # Construct FastAPI Response object
     response = Response(
         content=resp.content,
         status_code=resp.status_code,
@@ -60,7 +83,6 @@ async def cache_middleware(request: Request, call_next):
     }
 
     return response
-
 
 @app.get("/")
 async def root():
