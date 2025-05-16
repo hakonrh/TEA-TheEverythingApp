@@ -1,0 +1,7 @@
+services:
+  cache:
+    build: ./cache
+    ports:
+      - "8000:8000"
+    environment:
+      - BACKEND_API=https://tea-theeverythingapp.onrender.com

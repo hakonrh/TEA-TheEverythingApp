@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://tea-theeverythingapp.onrender.com";
+const API_BASE_URL = "http://localhost:8000";
 
 function getAuthHeaders() {
   const token = localStorage.getItem("token");
