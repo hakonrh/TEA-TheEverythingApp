@@ -8,39 +8,38 @@ from user_registration import get_current_account
 from models import Account
 from schemas import CreatePostRequest, EditPostRequest
 
+from cache_db import get_or_set_cache, invalidate_cache, clear_cache_startswith
+
 router = APIRouter()
 
 # Get all posts
 @router.get("/posts")
 async def get_posts(db: AsyncSession = Depends(get_db)):
-    query = text("""
-        SELECT posts.postid, accounts.username, accounts.email, posts.content, posts.createdat, posts.likes 
-        FROM posts 
-        JOIN accounts ON posts.accountid = accounts.accountid
-        ORDER BY posts.createdat DESC;
-    """)
-    result = await db.execute(query)
-    posts = result.fetchall()
-    
-    return {"posts": [dict(row._mapping) for row in posts]}
+    async def fetch_from_db():
+        query = text("""SELECT posts.postid, accounts.username, accounts.email, posts.content, posts.createdat, posts.likes 
+                        FROM posts JOIN accounts ON posts.accountid = accounts.accountid
+                        ORDER BY posts.createdat DESC;""")
+        result = await db.execute(query)
+        return [dict(row._mapping) for row in result.fetchall()]
+
+    posts = await get_or_set_cache("posts:all", fetch_from_db)
+    return {"posts": posts}
+
 
 # Get current user's posts
 @router.get("/myposts")
-async def get_user_posts(
-    db: AsyncSession = Depends(get_db),
-    current_user: Account = Depends(get_current_account)
-):
-    query = text("""
-        SELECT postid, content, createdat, lastedited, likes
-        FROM posts
-        WHERE accountid = :accountid
-        ORDER BY createdat DESC;
-    """)
+async def get_user_posts(db: AsyncSession = Depends(get_db), current_user: Account = Depends(get_current_account)):
+    cache_key = f"myposts:{current_user.accountid}"
 
-    result = await db.execute(query, {"accountid": current_user.accountid})
-    posts = result.fetchall()
+    async def fetch_from_db():
+        query = text("""SELECT postid, content, createdat, lastedited, likes FROM posts 
+                        WHERE accountid = :accountid ORDER BY createdat DESC""")
+        result = await db.execute(query, {"accountid": current_user.accountid})
+        return [dict(row._mapping) for row in result.fetchall()]
 
-    return {"posts": [dict(row._mapping) for row in posts]}
+    posts = await get_or_set_cache(cache_key, fetch_from_db)
+    return {"posts": posts}
+
 
 
 # Make a new post
@@ -71,6 +70,9 @@ async def create_post(
         raise HTTPException(status_code=500, detail="Failed to create post")
 
     await db.commit()
+    clear_cache_startswith("posts")
+    clear_cache_startswith("myposts")
+
     return {"postid": post.postid, "content": post_data.content, "createdat": post.createdat}
 
 # Edit post by id
@@ -99,6 +101,8 @@ async def edit_post(
         {"content": post_data.new_content, "postid": post_id},
     )
     await db.commit()
+    clear_cache_startswith("posts")
+    clear_cache_startswith("myposts")
 
     return {"message": "Post updated"}
 
@@ -123,6 +127,9 @@ async def delete_post(
     await db.execute(text("DELETE FROM posts WHERE postid = :postid"), {"postid": post_id})
     await db.commit()
 
+    clear_cache_startswith("posts")
+    clear_cache_startswith("myposts")
+
     return {"message": "Post deleted"}
 
 # Like a post by id (increments likes by 1)
@@ -142,5 +149,8 @@ async def like_post(
     # Increment likes
     await db.execute(text("UPDATE posts SET likes = COALESCE(likes, 0) + 1 WHERE postid = :postid"), {"postid": post_id})
     await db.commit()
+
+    clear_cache_startswith("posts")
+    clear_cache_startswith("myposts")
 
     return {"Post liked": post.likes}
