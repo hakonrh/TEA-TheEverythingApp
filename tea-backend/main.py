@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
-from database import get_db, get_db_session
+from database import get_db, SessionLocal
 
 from routers import fetch_tables, posts, accounts, search
 from user_registration import router as user_router
@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI):
 
     async def flush_loop():
         while not stop_event.is_set():
-            async with get_db_session() as db:
+            async with SessionLocal() as db:
                 await flush_likes(db)
             await asyncio.sleep(5)
 
