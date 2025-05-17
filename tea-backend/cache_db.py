@@ -12,11 +12,14 @@ async def get_or_set_cache(key: str, fetch_func: Callable[[], Awaitable[Any]]) -
     if key in _cache:
         data, timestamp = _cache[key]
         if not _is_expired(timestamp):
+            print(f"[CACHE HIT] key={key}")
             return data
         else:
+            print(f"[CACHE EXPIRED] key={key}")
             del _cache[key]  # Expired, remove
 
     # Cache miss or expired
+    print(f"[CACHE MISS] key={key}")
     data = await fetch_func()
     _cache[key] = (data, time.time())
     return data
