@@ -1,4 +1,5 @@
-const API_BASE_URL = "https://tea-loadbalancer.onrender.com";
+const API_CACHE_URL = "https://tea-loadbalancer.onrender.com";
+const API_BACKEND_URL = "https://tea-theeverythingapp.onrender.com/";
 
 function getAuthHeaders() {
   const token = localStorage.getItem("token");
@@ -8,7 +9,7 @@ function getAuthHeaders() {
 // Get all posts
 export async function getPosts() {
   try {
-    const response = await fetch(`${API_BASE_URL}/posts`);
+    const response = await fetch(`${API_CACHE_URL}/posts`);
     if (!response.ok) {
       throw new Error("Failed to fetch posts");
     }
@@ -20,7 +21,7 @@ export async function getPosts() {
 
 // Get current user's posts
 export async function getUserPosts() {
-  const response = await fetch(`${API_BASE_URL}/myposts`, {
+  const response = await fetch(`${API_CACHE_URL}/myposts`, {
     headers: getAuthHeaders(),
   });
   return response.json();
@@ -29,7 +30,7 @@ export async function getUserPosts() {
 
 // Create a new post
 export async function createPost(content) {
-  const response = await fetch(`${API_BASE_URL}/posts`, {
+  const response = await fetch(`${API_BACKEND_URL}/posts`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...getAuthHeaders() },
     body: JSON.stringify({ content }),
@@ -39,7 +40,7 @@ export async function createPost(content) {
 
 // Edit a post
 export async function editPost(postId, newContent) {
-  const response = await fetch(`${API_BASE_URL}/posts/${postId}`, {
+  const response = await fetch(`${API_BACKEND_URL}/posts/${postId}`, {
     method: "PUT",
     headers: { 
       ...getAuthHeaders(), 
@@ -59,7 +60,7 @@ export async function editPost(postId, newContent) {
 
 // Delete a post
 export async function deletePost(postId) {
-  await fetch(`${API_BASE_URL}/posts/${postId}`, {
+  await fetch(`${API_BACKEND_URL}/posts/${postId}`, {
     method: "DELETE",
     headers: getAuthHeaders(),
   });
@@ -68,7 +69,7 @@ export async function deletePost(postId) {
 // Get all accounts
 export async function getAccounts() {
   try {
-    const response = await fetch(`${API_BASE_URL}/accounts`);
+    const response = await fetch(`${API_CACHE_URL}/accounts`);
     if (!response.ok) {
       throw new Error("Failed to fetch accounts");
     }
@@ -81,7 +82,7 @@ export async function getAccounts() {
 // Register new user
 export async function registerUser(username, email, password) {
   try {
-    const response = await fetch(`${API_BASE_URL}/user/register`, {
+    const response = await fetch(`${API_BACKEND_URL}/user/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, email, password }),
@@ -105,7 +106,7 @@ export async function loginUser(email, password) {
     formData.append("email", email);
     formData.append("password", password);
 
-    const response = await fetch(`${API_BASE_URL}/user/login`, {
+    const response = await fetch(`${API_BACKEND_URL}/user/login`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: formData,
@@ -126,7 +127,7 @@ export async function loginUser(email, password) {
 
 // Search posts
 export async function searchPosts(query) {
-  const response = await fetch(`${API_BASE_URL}/search/posts?q=${encodeURIComponent(query)}`);
+  const response = await fetch(`${API_CACHE_URL}/search/posts?q=${encodeURIComponent(query)}`);
   if (!response.ok) {
     throw new Error("Failed to search posts");
   }
@@ -135,7 +136,7 @@ export async function searchPosts(query) {
 
 // Search accounts
 export async function searchAccounts(query) {
-  const response = await fetch(`${API_BASE_URL}/search/accounts?q=${encodeURIComponent(query)}`);
+  const response = await fetch(`${API_CACHE_URL}/search/accounts?q=${encodeURIComponent(query)}`);
   if (!response.ok) {
     throw new Error("Failed to search accounts");
   }
@@ -144,7 +145,7 @@ export async function searchAccounts(query) {
 
 // Search hashtags
 export async function searchHashtags(query) {
-  const response = await fetch(`${API_BASE_URL}/search/hashtags?q=${encodeURIComponent(query)}`);
+  const response = await fetch(`${API_CACHE_URL}/search/hashtags?q=${encodeURIComponent(query)}`);
   if (!response.ok) {
     throw new Error("Failed to search hashtags");
   }
@@ -153,7 +154,7 @@ export async function searchHashtags(query) {
 
 // Like a post
 export async function likePost(postId) {
-  const response = await fetch(`${API_BASE_URL}/posts/${postId}/like`, {
+  const response = await fetch(`${API_BACKEND_URL}/posts/${postId}/like`, {
     method: "PATCH",
     headers: getAuthHeaders(),
   });
