@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://tea-cache.onrender.com";
+const API_BASE_URL = "https://tea-loadbalancer.onrender.com";
 
 function getAuthHeaders() {
   const token = localStorage.getItem("token");
