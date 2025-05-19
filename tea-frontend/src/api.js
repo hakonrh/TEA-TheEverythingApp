@@ -1,5 +1,5 @@
 const API_CACHE_URL = "https://tea-loadbalancer.onrender.com";
-const API_BACKEND_URL = "https://tea-theeverythingapp.onrender.com/";
+const API_BACKEND_URL = "https://tea-theeverythingapp.onrender.com";
 
 function getAuthHeaders() {
   const token = localStorage.getItem("token");
