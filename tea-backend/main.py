@@ -20,6 +20,8 @@ from datetime import datetime
 from log_state import logs, db_counter
 import pytz
 
+app = FastAPI(lifespan=lifespan)
+
 @app.middleware("http")
 async def log_middleware(request: Request, call_next):
     start_time = time.time()
@@ -61,7 +63,6 @@ async def lifespan(app: FastAPI):
     except asyncio.CancelledError:
         pass
 
-app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
