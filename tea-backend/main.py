@@ -20,27 +20,6 @@ from datetime import datetime
 from log_state import logs, db_counter
 import pytz
 
-app = FastAPI(lifespan=lifespan)
-
-@app.middleware("http")
-async def log_middleware(request: Request, call_next):
-    start_time = time.time()
-    response = await call_next(request)
-    duration = round((time.time() - start_time) * 1000, 2)
-    method = request.method
-    path = request.url.path
-
-    # Capture request info and DB access count
-    logs.append({
-        "timestamp": datetime.now(pytz.utc).isoformat() + "Z",
-        "method": method,
-        "path": path,
-        "duration_ms": duration,
-        "db_accesses": db_counter.get()
-    })
-
-    return response
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     stop_event = asyncio.Event()
@@ -63,6 +42,26 @@ async def lifespan(app: FastAPI):
     except asyncio.CancelledError:
         pass
 
+app = FastAPI(lifespan=lifespan)
+
+@app.middleware("http")
+async def log_middleware(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = round((time.time() - start_time) * 1000, 2)
+    method = request.method
+    path = request.url.path
+
+    # Capture request info and DB access count
+    logs.append({
+        "timestamp": datetime.now(pytz.utc).isoformat() + "Z",
+        "method": method,
+        "path": path,
+        "duration_ms": duration,
+        "db_accesses": db_counter.get()
+    })
+
+    return response
 
 app.add_middleware(
     CORSMiddleware,
