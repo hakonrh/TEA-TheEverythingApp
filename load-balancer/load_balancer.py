@@ -1,5 +1,3 @@
-# load_balancer.py
-
 from fastapi import FastAPI, Request, Response
 import httpx
 import random
@@ -7,14 +5,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Replace these with your actual cache service URLs
 CACHE_SERVERS = [
     "https://tea-cache.onrender.com",
     "https://tea-cache-2.onrender.com",
     "https://tea-cache-3.onrender.com"
 ]
 
-# Optional: allow requests from your frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://tea-dofo.onrender.com"],

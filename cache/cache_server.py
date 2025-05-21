@@ -18,9 +18,8 @@ app.add_middleware(
 cache: Dict[str, Dict] = {}
 
 # Cache lifetime in seconds
-CACHE_TTL = 60  # 1 minute
+CACHE_TTL = 60
 
-# Address of the actual API server (hosted on Render)
 BACKEND_API = "https://tea-theeverythingapp.onrender.com"
 
 def invalidate_cache():

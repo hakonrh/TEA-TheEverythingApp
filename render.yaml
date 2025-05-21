@@ -1,5 +1,4 @@
 services:
-  # ✅ Backend Service (FastAPI + PostgreSQL in one)
   - name: tea-backend
     type: web
     env: python
@@ -12,7 +11,6 @@ services:
       cd tea-backend
       ./start.sh
 
-  # ✅ Frontend Service (React, Vue, Next.js, etc.)
   - name: tea-frontend
     type: web
     env: static

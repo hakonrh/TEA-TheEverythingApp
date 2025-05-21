@@ -8,9 +8,8 @@ from sqlalchemy.sql import text
 _like_buffer: Dict[int, Tuple[int, float]] = {}
 _lock = asyncio.Lock()
 
-# Config
 MAX_BATCH_SIZE = 10
-MAX_WAIT_TIME = 60  # seconds
+MAX_WAIT_TIME = 60
 
 async def add_like(post_id: int):
     async with _lock:

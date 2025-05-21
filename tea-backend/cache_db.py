@@ -1,7 +1,7 @@
 import time
 from typing import Any, Dict, Tuple, Callable, Awaitable
 
-CACHE_TTL_SECONDS = 60  # 1 minute
+CACHE_TTL_SECONDS = 60
 
 _cache: Dict[str, Tuple[Any, float]] = {}
 
@@ -16,9 +16,8 @@ async def get_or_set_cache(key: str, fetch_func: Callable[[], Awaitable[Any]]) -
             return data
         else:
             print(f"[CACHE EXPIRED] key={key}")
-            del _cache[key]  # Expired, remove
+            del _cache[key]
 
-    # Cache miss or expired
     print(f"[CACHE MISS] key={key}")
     data = await fetch_func()
     _cache[key] = (data, time.time())
